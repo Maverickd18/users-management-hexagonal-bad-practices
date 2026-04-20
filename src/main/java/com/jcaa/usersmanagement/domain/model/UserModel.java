@@ -34,4 +34,11 @@ public class UserModel {
   public UserModel deactivate() {
     return new UserModel(id, name, email, password, role, UserStatus.INACTIVE);
   }
+
+  public String idValue() { return id.value(); }
+  public String nameValue() { return name.value(); }
+  public String emailValue() { return email.value(); }
+  public String passwordValue() { return password.value(); }
+  public String roleName() { return role.name(); }
+  public String statusName() { return status.name(); }
 }
