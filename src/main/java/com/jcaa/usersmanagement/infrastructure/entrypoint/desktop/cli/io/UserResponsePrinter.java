@@ -20,13 +20,11 @@ public final class UserResponsePrinter {
     console.printf(ROW_FORMAT, "Name",   response.name());
     console.printf(ROW_FORMAT, "Email",  response.email());
     console.printf(ROW_FORMAT, "Role",   response.role());
-    // Solución Regla 16: delegación al enum para obtener la etiqueta de visualización
     console.printf(ROW_FORMAT, "Status", UserStatus.fromString(response.status()).getDisplayLabel());
     console.println(SEPARATOR);
   }
 
   public void printList(final List<UserResponse> users) {
-    // Solución Regla 5: Robustez ante nulos o listas vacías
     if (users == null || users.isEmpty()) {
       console.println(NO_USERS_MESSAGE);
       return;
@@ -36,7 +34,6 @@ public final class UserResponsePrinter {
   }
 
   public void printSummary(final List<UserResponse> users) {
-    // Solución Regla 27: Código legible y directo
     if (users == null || users.isEmpty()) {
       console.println(NO_USERS_MESSAGE);
       return;

@@ -46,7 +46,6 @@ public class UserDesktopMapper {
   }
 
   public static UserResponse toResponse(final UserModel user) {
-    // Solución Ley de Deméter: uso de métodos delegados idValue(), nameValue(), etc.
     return new UserResponse(
         user.idValue(),
         user.nameValue(),
