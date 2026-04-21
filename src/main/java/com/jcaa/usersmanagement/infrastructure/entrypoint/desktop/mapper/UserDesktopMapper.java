@@ -10,17 +10,12 @@ import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.dto.CreateUser
 import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.dto.LoginRequest;
 import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.dto.UpdateUserRequest;
 import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.dto.UserResponse;
+import lombok.experimental.UtilityClass;
 
 import java.util.List;
 
-public final class UserDesktopMapper {
-
-  private UserDesktopMapper() {
-    // clase utilitaria: no se permite instanciar
-  }
-
-  // Regla 4 (Clean Code): los métodos públicos van primero; el auxiliar privado
-  // aparece al final, cerca del método público que lo invoca.
+@UtilityClass
+public class UserDesktopMapper {
 
   public static CreateUserCommand toCreateCommand(final CreateUserRequest request) {
     return new CreateUserCommand(
@@ -51,21 +46,19 @@ public final class UserDesktopMapper {
   }
 
   public static UserResponse toResponse(final UserModel user) {
+    // Solución Ley de Deméter: uso de métodos delegados idValue(), nameValue(), etc.
     return new UserResponse(
-        user.getId().value(),
-        user.getName().value(),
-        user.getEmail().value(),
+        user.idValue(),
+        user.nameValue(),
+        user.emailValue(),
         user.getRole().name(),
-        user.getStatus().name());
+        user.statusName());
   }
 
   public static List<UserResponse> toResponseList(final List<UserModel> users) {
     return users.stream().map(UserDesktopMapper::toResponse).toList();
   }
 
-  // Regla 21 (Clean Code): el auxiliar privado lanza una excepción directamente en lugar
-  // de retornar un código de error (-1). El nombre expresa la intención ("requireValidId"),
-  // y el contrato de salida es claro: o pasa sin error o lanza excepción.
   private static void requireValidId(final String id) {
     if (id == null || id.isBlank()) {
       throw new IllegalArgumentException("ID inválido");
