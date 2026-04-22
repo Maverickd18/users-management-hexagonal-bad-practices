@@ -41,4 +41,12 @@ public class UserModel {
   public String passwordValue() { return password.value(); }
   public String roleName() { return role.name(); }
   public String statusName() { return status.name(); }
+
+  public boolean passwordMatches(final String plainPassword) {
+    return password.verifyPlain(plainPassword);
+  }
+
+  public boolean isActive() {
+    return status == UserStatus.ACTIVE;
+  }
 }
