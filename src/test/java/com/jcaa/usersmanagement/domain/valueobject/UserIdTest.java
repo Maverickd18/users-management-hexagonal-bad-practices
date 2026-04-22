@@ -3,32 +3,40 @@ package com.jcaa.usersmanagement.domain.valueobject;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.jcaa.usersmanagement.domain.exception.InvalidUserIdException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-// VIOLACIÓN Regla 11: se eliminó @DisplayName de la clase y de todos los métodos.
-// Los tests deben tener nombres descriptivos con @DisplayName para documentar el comportamiento.
+@DisplayName("UserId")
 class UserIdTest {
 
   @ParameterizedTest
   @ValueSource(strings = {" user123 ", "  user123  ", "user123\t"})
+  @DisplayName("Se crea correctamente eliminando espacios en blanco (trim)")
   void shouldCreateUserIdWithTrimmedValue(String input) {
-    // VIOLACIÓN Regla 11: se eliminaron los comentarios Arrange–Act–Assert.
-    final String correctUserId = "user123";
+    // Arrange
+    final String expectedUserId = "user123";
+
+    // Act
     final UserId userId = new UserId(input);
-    // VIOLACIÓN Regla 11: se usa assertTrue(x.equals(y)) en lugar de assertEquals(x, y).
-    assertTrue(correctUserId.equals(userId.toString()));
+
+    // Assert
+    assertEquals(expectedUserId, userId.toString());
   }
 
   @Test
+  @DisplayName("Lanza NullPointerException cuando el ID es null")
   void shouldThrowNullPointerExceptionWhenUserIdIsNull() {
+    // Act & Assert
     assertThrows(NullPointerException.class, () -> new UserId(null));
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"", "   ", "\t", "\n", "\r", "\f", "\b"})
+  @DisplayName("Lanza InvalidUserIdException cuando el ID está vacío o en blanco")
   void shouldThrowIllegalArgumentExceptionWhenUserIdIsEmpty(String input) {
+    // Act & Assert
     assertThrows(InvalidUserIdException.class, () -> new UserId(input));
   }
 }
