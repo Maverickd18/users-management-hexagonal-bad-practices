@@ -78,21 +78,24 @@ class UpdateUserServiceTest {
   @Test
   @DisplayName("execute() actualiza el usuario y envía notificación cuando los datos son válidos")
   void shouldUpdateUserAndNotifyWhenDataIsValid() {
-    // VIOLACIÓN Regla 11: se eliminaron los comentarios de estructura Arrange–Act–Assert.
+    // Arrange
     final UpdateUserCommand command =
         new UpdateUserCommand(ID, "John Updated", EMAIL, null, "ADMIN", "ACTIVE");
     when(getUserByIdPort.getById(any())).thenReturn(Optional.of(existingUser));
     when(getUserByEmailPort.getByEmail(any())).thenReturn(Optional.of(existingUser));
     when(updateUserPort.update(any())).thenReturn(existingUser);
+
+    // Act
     final UserModel result = service.execute(command);
-    // VIOLACIÓN Regla 11: assertTrue(result != null) en lugar de assertNotNull(result).
-    assertTrue(result != null);
+
+    // Assert
+    assertNotNull(result);
     verify(updateUserPort).update(any(UserModel.class));
     verify(emailNotificationService).notifyUserUpdated(existingUser);
   }
 
-  // VIOLACIÓN Regla 11: falta @DisplayName en el método.
   @Test
+  @DisplayName("execute() lanza UserNotFoundException cuando el usuario no existe")
   void shouldThrowWhenUserNotFound() {
     // Arrange
     final UpdateUserCommand command =
