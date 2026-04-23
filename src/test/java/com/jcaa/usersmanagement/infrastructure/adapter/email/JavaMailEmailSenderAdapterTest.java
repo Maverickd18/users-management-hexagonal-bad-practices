@@ -44,7 +44,7 @@ class JavaMailEmailSenderAdapterTest {
   @BeforeEach
   void setUp() {
     final SmtpConfig config =
-        new SmtpConfig(HOST, PORT, USERNAME, PASSWORD, FROM_ADDRESS, FROM_NAME);
+        new SmtpConfig(HOST, PORT, USERNAME, PASSWORD, FROM_ADDRESS, FROM_NAME, false, null);
     adapter = new JavaMailEmailSenderAdapter(config);
     destination = new EmailDestinationModel(DEST_EMAIL, DEST_NAME, SUBJECT, BODY);
   }
