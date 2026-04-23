@@ -6,6 +6,12 @@ import com.jcaa.usersmanagement.application.port.in.GetAllUsersUseCase;
 import com.jcaa.usersmanagement.application.port.in.GetUserByIdUseCase;
 import com.jcaa.usersmanagement.application.port.in.LoginUseCase;
 import com.jcaa.usersmanagement.application.port.in.UpdateUserUseCase;
+import com.jcaa.usersmanagement.application.port.out.DeleteUserPort;
+import com.jcaa.usersmanagement.application.port.out.GetAllUsersPort;
+import com.jcaa.usersmanagement.application.port.out.GetUserByEmailPort;
+import com.jcaa.usersmanagement.application.port.out.GetUserByIdPort;
+import com.jcaa.usersmanagement.application.port.out.SaveUserPort;
+import com.jcaa.usersmanagement.application.port.out.UpdateUserPort;
 import com.jcaa.usersmanagement.application.service.CreateUserService;
 import com.jcaa.usersmanagement.application.service.DeleteUserService;
 import com.jcaa.usersmanagement.application.service.EmailNotificationService;
@@ -17,12 +23,16 @@ import com.jcaa.usersmanagement.infrastructure.adapter.email.JavaMailEmailSender
 import com.jcaa.usersmanagement.infrastructure.adapter.email.SmtpConfig;
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.config.DatabaseConfig;
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.config.DatabaseConnectionFactory;
+import com.jcaa.usersmanagement.infrastructure.adapter.persistence.exception.PersistenceException;
+import com.jcaa.usersmanagement.infrastructure.adapter.persistence.repository.InMemoryUserRepository;
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.repository.UserRepositoryMySQL;
 import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.controller.UserController;
+import lombok.extern.java.Log;
 
 import java.sql.Connection;
 import jakarta.validation.Validator;
 
+@Log
 public final class DependencyContainer {
 
   private static final String DB_HOST = "db.host";
@@ -43,8 +53,8 @@ public final class DependencyContainer {
   public DependencyContainer() {
     final AppProperties properties = new AppProperties();
 
-    final Connection connection = buildDatabaseConnection(properties);
-    final UserRepositoryMySQL userRepository = new UserRepositoryMySQL(connection);
+    final PersistenceContext context = buildPersistenceContext(properties);
+    final var userRepository = context.repository();
 
     final JavaMailEmailSenderAdapter emailSender =
         new JavaMailEmailSenderAdapter(buildSmtpConfig(properties));
@@ -54,14 +64,34 @@ public final class DependencyContainer {
     final Validator validator = ValidatorProvider.buildValidator();
 
     final CreateUserUseCase createUserUseCase =
-        new CreateUserService(userRepository, userRepository, emailNotification, validator);
+        new CreateUserService(
+            (SaveUserPort) userRepository,
+            (GetUserByEmailPort) userRepository,
+            emailNotification,
+            validator);
+
     final UpdateUserUseCase updateUserUseCase =
-        new UpdateUserService(userRepository, userRepository, userRepository, emailNotification, validator);
+        new UpdateUserService(
+            (UpdateUserPort) userRepository,
+            (GetUserByIdPort) userRepository,
+            (GetUserByEmailPort) userRepository,
+            emailNotification,
+            validator);
+
     final DeleteUserUseCase deleteUserUseCase =
-        new DeleteUserService(userRepository, userRepository, validator);
-    final GetUserByIdUseCase getUserByIdUseCase = new GetUserByIdService(userRepository, validator);
-    final GetAllUsersUseCase getAllUsersUseCase = new GetAllUsersService(userRepository);
-    final LoginUseCase loginUseCase = new LoginService(userRepository, validator);
+        new DeleteUserService(
+            (DeleteUserPort) userRepository,
+            (GetUserByIdPort) userRepository,
+            validator);
+
+    final GetUserByIdUseCase getUserByIdUseCase =
+        new GetUserByIdService((GetUserByIdPort) userRepository, validator);
+
+    final GetAllUsersUseCase getAllUsersUseCase =
+        new GetAllUsersService((GetAllUsersPort) userRepository);
+
+    final LoginUseCase loginUseCase =
+        new LoginService((GetUserByEmailPort) userRepository, validator);
 
     this.userController =
         new UserController(
@@ -72,6 +102,20 @@ public final class DependencyContainer {
             getAllUsersUseCase,
             loginUseCase);
   }
+
+  private PersistenceContext buildPersistenceContext(final AppProperties properties) {
+    try {
+      final Connection connection = buildDatabaseConnection(properties);
+      log.info("Database connection established successfully.");
+      return new PersistenceContext(new UserRepositoryMySQL(connection));
+    } catch (final PersistenceException exception) {
+      log.warning("Could not connect to database: " + exception.getMessage());
+      log.warning("Falling back to InMemoryUserRepository for this session.");
+      return new PersistenceContext(new InMemoryUserRepository());
+    }
+  }
+
+  private record PersistenceContext(Object repository) {}
 
   public UserController userController() {
     return userController;
