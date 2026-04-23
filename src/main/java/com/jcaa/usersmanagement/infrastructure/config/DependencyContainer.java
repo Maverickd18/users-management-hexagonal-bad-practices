@@ -19,7 +19,7 @@ import com.jcaa.usersmanagement.application.service.GetAllUsersService;
 import com.jcaa.usersmanagement.application.service.GetUserByIdService;
 import com.jcaa.usersmanagement.application.service.LoginService;
 import com.jcaa.usersmanagement.application.service.UpdateUserService;
-import com.jcaa.usersmanagement.infrastructure.adapter.email.MailtrapEmailSenderAdapter;
+import com.jcaa.usersmanagement.infrastructure.adapter.email.JavaMailEmailSenderAdapter;
 import com.jcaa.usersmanagement.infrastructure.adapter.email.SmtpConfig;
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.config.DatabaseConfig;
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.config.DatabaseConnectionFactory;
@@ -58,8 +58,8 @@ public final class DependencyContainer {
     final PersistenceContext context = buildPersistenceContext(properties);
     final var userRepository = context.repository();
 
-    final MailtrapEmailSenderAdapter emailSender =
-        new MailtrapEmailSenderAdapter(buildSmtpConfig(properties));
+    final JavaMailEmailSenderAdapter emailSender =
+        new JavaMailEmailSenderAdapter(buildSmtpConfig(properties));
     final EmailNotificationService emailNotification = new EmailNotificationService(emailSender);
 
     // Construir Validator para las validaciones en la capa de aplicación
