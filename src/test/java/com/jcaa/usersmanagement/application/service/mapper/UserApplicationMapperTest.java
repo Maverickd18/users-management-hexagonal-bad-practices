@@ -44,9 +44,9 @@ class UserApplicationMapperTest {
     // Assert
     assertAll(
         "fromCreateCommandToModel()",
-        () -> assertEquals(ID,              result.getId().value(),    "id"),
-        () -> assertEquals(NAME,            result.getName().value(),  "name"),
-        () -> assertEquals(EMAIL,           result.getEmail().value(), "email"),
+        () -> assertEquals(ID,              result.idValue(),    "id"),
+        () -> assertEquals(NAME,            result.nameValue(),  "name"),
+        () -> assertEquals(EMAIL,           result.emailValue(), "email"),
         () -> assertEquals(UserRole.ADMIN,  result.getRole(),          "role"),
         () -> assertEquals(UserStatus.PENDING, result.getStatus(),     "status debe ser PENDING"),
         () -> assertTrue(result.getPassword().verifyPlain(PASSWORD),   "password debe ser verificable"));
@@ -70,9 +70,9 @@ class UserApplicationMapperTest {
     // Assert
     assertAll(
         "fromUpdateCommandToModel() con nueva contraseña",
-        () -> assertEquals(ID,              result.getId().value(),    "id"),
-        () -> assertEquals(NAME,            result.getName().value(),  "name"),
-        () -> assertEquals(EMAIL,           result.getEmail().value(), "email"),
+        () -> assertEquals(ID,              result.idValue(),    "id"),
+        () -> assertEquals(NAME,            result.nameValue(),  "name"),
+        () -> assertEquals(EMAIL,           result.emailValue(), "email"),
         () -> assertEquals(UserRole.ADMIN,  result.getRole(),          "role"),
         () -> assertEquals(UserStatus.ACTIVE, result.getStatus(),      "status"),
         () -> assertTrue(result.getPassword().verifyPlain(newPassword), "debe usar la nueva contraseña"),

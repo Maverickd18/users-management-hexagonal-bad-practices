@@ -105,9 +105,9 @@ class UserRepositoryMySQLTest {
     // Assert
     assertAll(
         "save() happy path",
-        () -> assertEquals(ID, result.getId().value(), "id"),
-        () -> assertEquals(NAME, result.getName().value(), "name"),
-        () -> assertEquals(EMAIL, result.getEmail().value(), "email"));
+        () -> assertEquals(ID, result.idValue(), "id"),
+        () -> assertEquals(NAME, result.nameValue(), "name"),
+        () -> assertEquals(EMAIL, result.emailValue(), "email"));
   }
 
   // ── save() — INSERT fails → PersistenceException
@@ -156,7 +156,7 @@ class UserRepositoryMySQLTest {
     final UserModel result = repository.update(userModel);
 
     // Assert
-    assertEquals(ID, result.getId().value(), "id must match the updated user");
+    assertEquals(ID, result.idValue(), "id must match the updated user");
   }
 
   // ── update() — UPDATE fails → PersistenceException
@@ -192,7 +192,7 @@ class UserRepositoryMySQLTest {
     assertAll(
         "getById() found",
         () -> assertTrue(result.isPresent(), "must be present"),
-        () -> assertEquals(ID, result.get().getId().value(), "id"));
+        () -> assertEquals(ID, result.get().idValue(), "id"));
   }
 
   // ── getById() — no row → Optional.empty()
@@ -278,7 +278,7 @@ class UserRepositoryMySQLTest {
     assertAll(
         "getByEmail() found",
         () -> assertTrue(result.isPresent(), "must be present"),
-        () -> assertEquals(EMAIL, result.get().getEmail().value(), "email"));
+        () -> assertEquals(EMAIL, result.get().emailValue(), "email"));
   }
 
   // ── getByEmail() — no row → Optional.empty()
@@ -365,7 +365,7 @@ class UserRepositoryMySQLTest {
     assertAll(
         "getAll() happy path",
         () -> assertEquals(1, result.size(), "list size"),
-        () -> assertEquals(ID, result.get(0).getId().value(), "first user id"));
+        () -> assertEquals(ID, result.get(0).idValue(), "first user id"));
   }
 
   // ── getAll() — SQLException → PersistenceException

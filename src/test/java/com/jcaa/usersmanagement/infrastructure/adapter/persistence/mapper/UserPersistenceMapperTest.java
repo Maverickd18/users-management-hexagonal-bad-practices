@@ -92,9 +92,9 @@ class UserPersistenceMapperTest {
     // Assert
     assertAll(
         "fromEntityToModel()",
-        () -> assertEquals(ID, result.getId().value(), "id"),
-        () -> assertEquals(NAME, result.getName().value(), "name"),
-        () -> assertEquals(EMAIL, result.getEmail().value(), "email"),
+        () -> assertEquals(ID, result.idValue(), "id"),
+        () -> assertEquals(NAME, result.nameValue(), "name"),
+        () -> assertEquals(EMAIL, result.emailValue(), "email"),
         () -> assertEquals(UserRole.ADMIN, result.getRole(), "role"),
         () -> assertEquals(UserStatus.ACTIVE, result.getStatus(), "status"));
   }
