@@ -47,6 +47,8 @@ public final class DependencyContainer {
   private static final String SMTP_PASSWORD = "smtp.password";
   private static final String SMTP_FROM = "smtp.from.address";
   private static final String SMTP_FROM_NAME = "smtp.from.name";
+  private static final String MAILTRAP_SANDBOX = "mailtrap.sandbox";
+  private static final String MAILTRAP_INBOX_ID = "mailtrap.inbox.id";
 
   private final UserController userController;
 
@@ -139,6 +141,19 @@ public final class DependencyContainer {
         properties.get(SMTP_USER),
         properties.get(SMTP_PASSWORD),
         properties.get(SMTP_FROM),
-        properties.get(SMTP_FROM_NAME));
+        properties.get(SMTP_FROM_NAME),
+        Boolean.parseBoolean(properties.getOrDefault(MAILTRAP_SANDBOX, "false")),
+        parseOptionalLong(properties.getOrDefault(MAILTRAP_INBOX_ID, null)));
+  }
+
+  private static Long parseOptionalLong(final String value) {
+    if (value == null || value.isBlank() || value.contains("placeholder")) {
+      return null;
+    }
+    try {
+      return Long.parseLong(value);
+    } catch (NumberFormatException e) {
+      return null;
+    }
   }
 }

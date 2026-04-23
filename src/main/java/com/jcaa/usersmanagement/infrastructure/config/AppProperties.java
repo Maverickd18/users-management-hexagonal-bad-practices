@@ -37,6 +37,10 @@ public final class AppProperties {
     return Objects.requireNonNull(value, "Property not found in " + PROPERTIES_FILE + ": " + key);
   }
 
+  public String getOrDefault(final String key, final String defaultValue) {
+    return properties.getProperty(key, defaultValue);
+  }
+
   public int getInt(final String key) {
     final String value = get(key);
     try {

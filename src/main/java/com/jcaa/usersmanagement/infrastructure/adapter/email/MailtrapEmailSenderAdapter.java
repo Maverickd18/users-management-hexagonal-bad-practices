@@ -22,11 +22,17 @@ public final class MailtrapEmailSenderAdapter implements EmailSenderPort {
     this.fromAddress = config.fromAddress();
     this.fromName = config.fromName();
     
-    final MailtrapConfig mailtrapConfig = new MailtrapConfig.Builder()
-        .token(config.password()) // We use the password field as the token
-        .build();
+    final MailtrapConfig.Builder builder = new MailtrapConfig.Builder()
+        .token(config.password());
+
+    if (config.sandbox()) {
+        builder.sandbox(true);
+        if (config.inboxId() != null) {
+            // Some SDK versions use this, or it's handled via the token
+        }
+    }
         
-    this.client = MailtrapClientFactory.createMailtrapClient(mailtrapConfig);
+    this.client = MailtrapClientFactory.createMailtrapClient(builder.build());
   }
 
   @Override
