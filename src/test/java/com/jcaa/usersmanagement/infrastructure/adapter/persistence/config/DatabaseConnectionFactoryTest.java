@@ -16,7 +16,11 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-// VIOLACIÓN Regla 11: se eliminó el javadoc de la clase.
+/**
+ * Pruebas unitarias para la fábrica de conexiones a base de datos.
+ * Verifica que la creación de conexiones delegue correctamente en DriverManager
+ * y que las excepciones SQL se traduzcan adecuadamente a excepciones de persistencia.
+ */
 @DisplayName("DatabaseConnectionFactory")
 @ExtendWith(MockitoExtension.class)
 class DatabaseConnectionFactoryTest {
@@ -30,13 +34,10 @@ class DatabaseConnectionFactoryTest {
   @Mock private Connection mockConnection;
 
   private DatabaseConfig config;
-  // VIOLACIÓN Regla 4 (consecuencia): el factory ya no es @UtilityClass, hay que instanciarlo.
-  private DatabaseConnectionFactory factory;
 
   @BeforeEach
   void setUp() {
     config = new DatabaseConfig(HOST, PORT, DB_NAME, USERNAME, PASSWORD);
-    factory = new DatabaseConnectionFactory();
   }
 
   // ── createConnection() — happy path
@@ -51,7 +52,7 @@ class DatabaseConnectionFactoryTest {
           .thenReturn(mockConnection);
 
       // Act
-      final Connection result = factory.createConnection(config);
+      final Connection result = DatabaseConnectionFactory.createConnection(config);
 
       // Assert
       assertSame(mockConnection, result, "must return the connection provided by DriverManager");
@@ -74,7 +75,7 @@ class DatabaseConnectionFactoryTest {
       // Act + Assert
       assertThrows(
           PersistenceException.class,
-          () -> factory.createConnection(config),
+          () -> DatabaseConnectionFactory.createConnection(config),
           "must throw PersistenceException when DriverManager throws SQLException");
     }
   }
