@@ -38,6 +38,11 @@ public final class AppProperties {
   }
 
   public int getInt(final String key) {
-    return Integer.parseInt(get(key));
+    final String value = get(key);
+    try {
+      return Integer.parseInt(value);
+    } catch (final NumberFormatException exception) {
+      throw ConfigurationException.becauseValueIsInvalid(key, value, exception);
+    }
   }
 }
