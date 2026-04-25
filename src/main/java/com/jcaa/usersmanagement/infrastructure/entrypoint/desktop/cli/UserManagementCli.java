@@ -64,6 +64,7 @@ public final class UserManagementCli {
           .forEach(violation -> console.println("    - " + violation.getMessage()));
     } catch (final RuntimeException exception) {
       console.println("  Unexpected error: " + exception.getMessage());
+      exception.printStackTrace(System.err);
     }
   }
 
